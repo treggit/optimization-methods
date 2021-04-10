@@ -109,14 +109,15 @@ for [function_name, function] in functions:
 
     print("Optimization result for " + function_name + ": " + str(function_result) + " at point " + str(best_point))
 
-initial_point = np.array([0, 2])
-f = rosenbrock
 
-xmin, xmax = -1.5, 1.5
-ymin, ymax = -1, 3
+initial_point = np.array([2., 1.])
+f = test_function2
 
-x = np.arange(xmin, xmax, 0.1)
-y = np.arange(ymin, ymax, 0.1)
+xmin, xmax = -1, 3
+ymin, ymax = -1, 4
+
+x = np.arange(xmin, xmax, 0.01)
+y = np.arange(ymin, ymax, 0.01)
 x, y = np.meshgrid(x, y)
 z = f(x, y)
 plt.contour(x, y, z, 20)
