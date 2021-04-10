@@ -1,30 +1,30 @@
 import numpy as np
 
-from lab2.one_dimension import ternary_searcher
+from lab2.one_dimension import ternary_searcher, fibonacci
 from lab2.derivative import derivative
+from lab2.utils import default_stop_criterion
 
 
 def grad_descent(
         f, x0,
-        step_searcher=ternary_searcher,
-        eps=1e-6,
-        max_iters=100,
+        optimizer=lambda task: fibonacci(task, 0, 1.1)[0],
+        stop_criterion=None,
         df=None
 ):
     if df is None:
         df = derivative(f)
+    if stop_criterion is None:
+        stop_criterion = default_stop_criterion
     x = x0
     prev = np.zeros_like(x)
 
     points = [x0]
 
-    while abs(f(*x) - f(*prev)) > eps: #np.linalg.norm(x - prev) > eps:
-        if max_iters is not None and len(points) > max_iters:
-            break
+    while not stop_criterion(points, df, f): #np.linalg.norm(x - prev) > eps:
 
         dfx = df(x)
         dfx = dfx / np.sqrt(np.sum(dfx**2))
-        step = step_searcher(lambda s: f(*(x - s * dfx)), [-1, 1], len(points))
+        step = optimizer(lambda s: f(*(x - s * dfx)))
         prev = x
         x = x - step * dfx
         points.append(x)
