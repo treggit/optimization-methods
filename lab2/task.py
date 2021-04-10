@@ -110,9 +110,14 @@ x, y = np.meshgrid(x, y)
 z = f(x, y)
 plt.contour(x, y, z, 20)
 
-for solver in [conjugate_gradient, newton]:
+solvers = [
+         ["conjugate gradient", conjugate_gradient],
+         ["newton", newton],
+     ]
+for (solver_name, solver) in solvers:
     points = solver(f, initial_point)
-    plt.plot(points[:, 0], points[:, 1])
+    plt.plot(points[:, 0], points[:, 1], label=solver_name)
     plt.scatter(points[:, 0], points[:, 1])
 
+plt.legend()
 plt.show()
