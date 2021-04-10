@@ -15,7 +15,7 @@ def default_stop_criterion(trace, grad, f):
 
     if len(trace) > 1:
         delta = abs(f(*trace[-1]) - f(*trace[-2]))
-        if delta < 1e-6:
+        if delta < 1e-10:
             print("Update is too small: " + str(delta))
             return True
 
