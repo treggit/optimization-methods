@@ -44,15 +44,17 @@ def golden(f, a, b, eps=2e-8):
     while (b - a) / 2 >= eps:
         intervals += [[a, b]]
         if fx1 > fx2:
-            a = x1
+            a, b = x1, b
             x1 = x2
-            x2 = b - (x1 - a)
+            x2 = a + (b - a) / fi
+
             fx1 = fx2
             fx2 = f(x2)
         else:
-            b = x2
+            a, b = a, x2
             x2 = x1
-            x1 = a + (b - x2)
+            x1 = b - (b - a) / fi
+
             fx2 = fx1
             fx1 = f(x1)
 

@@ -19,7 +19,7 @@ def grad_descent(
     points = [x0]
 
     while abs(f(*x) - f(*prev)) > eps: #np.linalg.norm(x - prev) > eps:
-        if max is not None and len(points) > max_iters:
+        if max_iters is not None and len(points) > max_iters:
             break
 
         dfx = df(x)
