@@ -66,29 +66,35 @@ solvers = [
 
 execution_time = dict()
 iterations = dict()
+optimal_points = dict()
 
 for [solver_name, _] in solvers:
     execution_time[solver_name] = []
     iterations[solver_name] = []
+
 samples = len(functions) * len(initial_points)
-for function in functions:
+for [function_name, function] in functions:
     for initial_point in initial_points:
         for [solver_name, solver] in solvers:
-            print("### Solver %s, function %s, initial point %s" % (solver_name, function[0], initial_point))
-            time, points = execute_with_profiler(lambda: solver(function[1], initial_point))
+            print("### Solver %s, function %s, initial point %s" % (solver_name, function_name, initial_point))
+            time, points = execute_with_profiler(lambda: solver(function, initial_point))
 
             time /= len(points)
 
-            print("--- Result point %s, function value at the point %f" % (points[-1], function[1](*points[-1])))
+            optimal_point = points[-1]
+            function_value = function(*optimal_point)
+            if function_name not in optimal_points or function(*optimal_points[function_name]) > function_value:
+                optimal_points[function_name] = optimal_point
+            print("--- Result point %s, function value at the point %f" % (points[-1], function_value))
             if check_value_boom(time, execution_time[solver_name]):
                 print(
                     "!!! Solver %s, function %s, initial point %s: time execution on this sample increased significantly – %f"
-                    % (solver_name, function[0], initial_point, time)
+                    % (solver_name, function_name, initial_point, time)
                 )
             if check_value_boom(len(points), iterations[solver_name]):
                 print(
                     "!!! Solver %s, function %s, initial point %s: iterations number on this sample increased significantly – %f"
-                    % (solver_name, function[0], initial_point, len(points))
+                    % (solver_name, function_name, initial_point, len(points))
                 )
             execution_time[solver_name].append(time)
             iterations[solver_name].append(len(points))
@@ -97,6 +103,11 @@ show_plot("Sample", "Execution time (ms)", range(1, samples + 1), execution_time
           "Execution time per iteration")
 show_plot("Sample", "Iterations", range(1, samples + 1), iterations, "Iterations per method comparison")
 
+for [function_name, function] in functions:
+    best_point = optimal_points[function_name]
+    function_result = function(*best_point)
+
+    print("Optimization result for " + function_name + ": " + str(function_result) + " at point " + str(best_point))
 
 initial_point = np.array([0, 2])
 f = rosenbrock
